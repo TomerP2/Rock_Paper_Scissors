@@ -79,3 +79,39 @@ function playRound(playerSelection, computerSelection) {
         return 'Draw!';
     }
 }
+
+function game() {
+
+
+    //Define score variables:
+    let playerScore = 0;
+    let compScore = 0;
+    // Main game loop:
+    for (let i = 1; i <= 5; i++) {
+        // Get player and computer selection:
+        let playerSelection = window.prompt('Enter rock, paper, or scissors:');
+        let computerSelection = computerPlay();
+
+        // PLay a round to determine winner:
+        let result = playRound(playerSelection, computerSelection);
+
+        // Display the result:
+        console.log(result)
+
+        //Counts score:
+        if (result.slice(0, 4) === 'You w') {
+            playerScore += 1
+        } else if (result.slice(0, 4) === 'You l') {
+            compScore += 1
+        }
+    }
+    //Check who won/draw:
+    if (compScore > playerScore) {
+        console.log('Computer has won the game!')
+    } else if (playerScore > compScore) {
+        console.log('You have won the game!')
+    } else {
+        console.log('Game is a draw!')
+    }
+
+}
