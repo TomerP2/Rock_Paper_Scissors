@@ -81,8 +81,6 @@ function playRound(playerSelection, computerSelection) {
 }
 
 function game() {
-
-
     //Define score variables:
     let playerScore = 0;
     let compScore = 0;

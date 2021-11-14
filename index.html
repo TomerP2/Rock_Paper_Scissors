@@ -7,10 +7,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rock Paper Scissors!</title>
     <script src="javascript.js"></script>
+    <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
+    <div class="title-container">
+        <h1 class="title"> Rock, Paper, Scissors</h1>
+    </div>
+    <div class="game-container">
+        <div class="player-container">
+            <p class="player-text">You: 0</p>
+            <div class="rock box">
+                <p class="symbol-text rock-text">
+                    Rock
+                </p>
+            </div>
+            <div class="paper box player-choice">
+                <p class="symbol-text paper-text">
+                    Paper
+                </p>
+            </div>
+            <div class="scissors box">
+                <p class="symbol-text scissors-text">
+                    Scissors
+                </p>
+            </div>
+        </div>
+        <div class="info-container">
+            <p class="rounds-meter">
+                Rounds left: 5
+            </p>
+            <p class="result-old">
+                You lose! <span class="red-text">rock</span> beats <span class="blue-text">scissors</span>!
+            </p>
+            <p class="result-new">You win! <span class="blue-text">paper</span> beats <span class="red-text">rock</span>!</p>
+        </div>
+        <div class="pc-container">
+            <p class="computer-text">Computer: 0</p>
+            <div class="rock box computer-choice">
+                <p class="symbol-text rock-text">
+                    Rock
+                </p>
+            </div>
+            <div class="paper box">
+                <p class="symbol-text paper-text">
+                    Paper
+                </p>
+            </div>
+            <div class="scissors box">
+                <p class="symbol-text scissors-text">
+                    Scissors
+                </p>
+            </div>
 
+        </div>
+    </div>
 </body>
 
 </html>
