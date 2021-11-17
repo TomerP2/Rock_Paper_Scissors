@@ -1,3 +1,16 @@
+// Set internal variables
+let playerScore = 0;
+let computerScore = 0;
+let roundsLeft = 5;
+let ongoingGame = false;
+
+// Set DOM elements
+const infoCont = document.querySelector('.info-container');
+const playerScoreElem = document.querySelector('.player-text');
+const computerScoreElem = document.querySelector('.computer-text');
+const roundsLeftElem = document.querySelector('.rounds-meter');
+
+
 function computerPlay() {
     // Returns either Rock, Paper, or Scissors at random.
     // Input: nothing
@@ -17,6 +30,35 @@ function computerPlay() {
     }
 }
 
+function addEventListeners() {
+    //Adds event listeners to every button on page.
+    const buttons = document.querySelectorAll("button");
+
+    buttons.forEach((button) => {
+        button.addEventListener("click", function(e) {
+            if (ongoingGame === true) {
+                let playerSelection = button.dataset.key;
+                let computerSelection = computerPlay();
+                highlightChoices(playerSelection, computerSelection);
+
+                let roundResult = playRound(playerSelection, computerSelection);
+                updateScore(roundResult, playerSelection, computerSelection)
+            } else {
+                playerScore = 0;
+                computerScore = 0;
+                roundsLeft = 5;
+                ongoingGame = true;
+                playerScoreElem.textContent = `You: ${playerScore}`;
+                computerScoreElem.textContent = `Computer: ${computerScore}`;
+                //Delete old round results
+                removeElementsByClass('result-old');
+                removeElementsByClass('result-new');
+                button.click()
+            }
+        })
+    })
+}
+
 function playRound(playerSelection, computerSelection) {
     // Plays a round of rock-paper-scissors. 
 
@@ -25,11 +67,11 @@ function playRound(playerSelection, computerSelection) {
     // 	- a string signifying the computer's selection
 
     // output:
-    // 	- a string telling the player either:
-    // 		- 'You won! X beats Y!'
-    // 		- 'You lost! X beats Y!'
+    // 	- a string with as value either:
+    // 		- 'player'
+    // 		- 'comp'
+    //      - 'draw'
 
-    playerSelection = playerSelection.toLowerCase();
 
     // Figure out which combination of elements has been played.
 
@@ -69,47 +111,95 @@ function playRound(playerSelection, computerSelection) {
         winStatus = 'draw';
     }
 
-    // Return winner/draw
+    return winStatus
+}
 
-    if (winStatus === 'player') {
-        return `You won! ${playerSelection} beats ${computerSelection}!`;
-    } else if (winStatus === 'comp') {
-        return `You lost! ${computerSelection} beats ${playerSelection}!`;
+function highlightChoices(playerSelection, computerSelection) {
+    // Gives the divs assosiated with playerSelection and computerSelection the classes player-choice and computer-choice for a set time, then removes them.
+    const playerDiv = document.getElementById(`player-${playerSelection}`);
+    const computerDiv = document.getElementById(`computer-${computerSelection}`)
+
+    playerDiv.classList.add('player-choice')
+    computerDiv.classList.add('computer-choice')
+    setTimeout(() => {
+        playerDiv.classList.remove('player-choice');
+        computerDiv.classList.remove('computer-choice');
+    }, 550)
+}
+
+function updateScore(roundResult, playerSelection, computerSelection) {
+    switch (roundResult) {
+        case "player":
+            playerScore += 1;
+            roundsLeft -= 1;
+            // Update player score element
+            playerScoreElem.textContent = `You: ${playerScore}`;
+            //add p element to info container
+            fadeOldResults()
+            RoundResultElem = document.createElement('p')
+            RoundResultElem.classList.add('result-new')
+            RoundResultElem.innerHTML = `You win! <span class="blue-text">${playerSelection}</span> beats <span class="red-text">${computerSelection}!`
+            infoCont.appendChild(RoundResultElem)
+            break;
+        case "comp":
+            computerScore += 1;
+            roundsLeft -= 1;
+            // Update computer score element
+            computerScoreElem.textContent = `Computer: ${computerScore}`;
+            //add p element to info container
+            fadeOldResults()
+            RoundResultElem = document.createElement('p')
+            RoundResultElem.classList.add('result-new')
+            RoundResultElem.innerHTML = `You lose! <span class="red-text">${computerSelection}</span> beats <span class="blue-text">${playerSelection}</span>!`
+            infoCont.appendChild(RoundResultElem)
+            break;
+        case "draw":
+            roundsLeft -= 1;
+            //add p element to info container
+            fadeOldResults()
+            RoundResultElem = document.createElement('p')
+            RoundResultElem.classList.add('result-new')
+            RoundResultElem.innerHTML = `Draw!`
+            infoCont.appendChild(RoundResultElem)
+            break;
+
+    }
+    roundsLeftElem.textContent = `Rounds left: ${roundsLeft}`
+
+    if (roundsLeft === 0) {
+        displayWinner(computerScore, playerScore);
+        ongoingGame = false;
+    }
+
+}
+
+function fadeOldResults() {
+    oldResultsElem = document.querySelectorAll('.result-new');
+    oldResultsElem.forEach((resultElem) => {
+        resultElem.classList.remove('result-new');
+        resultElem.classList.add('result-old');
+    })
+}
+
+function displayWinner(computerScore, playerScore) {
+
+    //Display winner
+    if (computerScore > playerScore) {
+        roundsLeftElem.textContent = 'You Lose'
+    } else if (playerScore > computerScore) {
+        roundsLeftElem.textContent = 'You Win!'
     } else {
-        return 'Draw!';
+        roundsLeftElem.textContent = 'Draw'
     }
 }
 
-function game() {
-    //Define score variables:
-    let playerScore = 0;
-    let compScore = 0;
-    // Main game loop:
-    for (let i = 1; i <= 5; i++) {
-        // Get player and computer selection:
-        let playerSelection = window.prompt('Enter rock, paper, or scissors:');
-        let computerSelection = computerPlay();
-
-        // PLay a round to determine winner:
-        let result = playRound(playerSelection, computerSelection);
-
-        // Display the result:
-        console.log(result)
-
-        //Counts score:
-        if (result.slice(0, 4) === 'You w') {
-            playerScore += 1
-        } else if (result.slice(0, 4) === 'You l') {
-            compScore += 1
-        }
+function removeElementsByClass(className) {
+    const elements = document.getElementsByClassName(className);
+    while (elements.length > 0) {
+        elements[0].parentNode.removeChild(elements[0]);
     }
-    //Check who won/draw:
-    if (compScore > playerScore) {
-        console.log('Computer has won the game!')
-    } else if (playerScore > compScore) {
-        console.log('You have won the game!')
-    } else {
-        console.log('Game is a draw!')
-    }
-
 }
+
+
+
+addEventListeners();
